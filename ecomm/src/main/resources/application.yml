@@ -1,0 +1,14 @@
+#spring
+spring:
+  application:
+    name: ecommds
+
+#port
+server:
+  port: 8710
+
+#eureka
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false

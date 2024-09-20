@@ -1,0 +1,60 @@
+#server
+server:
+  port: 8000
+
+#spring
+spring:
+  application:
+    name: apigw-service
+  cloud:
+    gateway:
+      routes:
+        - id: user-m-service
+          uri: lb://USER-M-SERVICE
+          predicates:
+            - Path=/user-m-service/**
+          filters:
+            - CustomFilter
+
+        - id: catalog-m-service
+          uri: lb://CATALOG-M-SERVICE
+          predicates:
+            - Path=/catalog-m-service/**
+          filters:
+            - CustomFilter
+
+        - id: order-m-service
+          uri: lb://ORDER-M-SERVICE
+          predicates:
+            - Path=/order-m-service/**
+          filters:
+            - CustomFilter
+
+        - id: second-service
+          uri: lb://SECOND-SERVICE
+          predicates:
+            - Path=/second-service/**
+          filters:
+            #                        - AddRequestHeader=second-request, second-request-header2
+            #                        - AddResponseHeader=second-response, second-response-header2
+            - CustomFilter
+            - name: LoggingFilter
+              args:
+                baseMessage: Hi, there
+                preLogger: true
+                postLogger: true
+
+      default-filters:
+        - name: GlobalFilter
+          args:
+            baseMessage: Spring Cloud Gateway GlobalFilter
+            preLogger: true
+            postLogger: true
+
+#eureka
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8710/eureka
