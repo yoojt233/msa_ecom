@@ -1,6 +1,7 @@
 package service.usermservice.service
 
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
@@ -14,9 +15,9 @@ import java.util.UUID
 class UserServiceImpl @Autowired constructor(
     private val userRepository: UserRepository,
     private val passwordEncoder: BCryptPasswordEncoder
-) {
+) : UserService {
 
-    fun createUser(userDto: UserDto): UserDto {
+    override fun createUser(userDto: UserDto): UserDto {
         userDto.userId = UUID.randomUUID().toString()
 
         val userEntity = userDto.toUserEntity()
@@ -26,7 +27,7 @@ class UserServiceImpl @Autowired constructor(
         return userDto
     }
 
-    fun getUserByUserId(userId: String): UserDto {
+    override fun getUserByUserId(userId: String): UserDto {
         val userEntity = userRepository.findByUserId(userId) ?: throw UsernameNotFoundException("User not found")
         val userDto = UserDto.fromUserEntity(userEntity)
 
@@ -36,7 +37,13 @@ class UserServiceImpl @Autowired constructor(
         return userDto
     }
 
-    fun getUserByAll(): Iterable<UserEntity> {
+    override fun getUserByAll(): Iterable<UserEntity> {
         return userRepository.findAll()
+    }
+
+    override fun loadUserByUsername(username: String?): UserDetails {
+        val userEntity = userRepository.findByEmail(username) ?: throw UsernameNotFoundException(username)
+
+
     }
 }

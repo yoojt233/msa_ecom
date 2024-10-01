@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController
 import service.usermservice.vo.Greeting
 import service.usermservice.vo.RequestUser
 import service.usermservice.service.UserServiceImpl
+import service.usermservice.vo.RequestLogin
 import service.usermservice.vo.ResponseUser
 
 @RestController
@@ -58,5 +59,10 @@ class UsersController @Autowired constructor(
         val result = userDto.toResponseUser()
 
         return ResponseEntity.status(HttpStatus.OK).body(result)
+    }
+
+    @PostMapping("/login")
+    fun loginUser(@RequestBody @Valid user: RequestLogin): ResponseEntity<ResponseUser> {
+
     }
 }
