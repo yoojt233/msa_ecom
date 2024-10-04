@@ -19,7 +19,7 @@ import service.usermservice.vo.RequestLogin
 import service.usermservice.vo.ResponseUser
 
 @RestController
-@RequestMapping("/user-m-service")
+@RequestMapping("/")
 class UsersController @Autowired constructor(
     private val env: Environment,
     private val greeting: Greeting,
@@ -61,8 +61,8 @@ class UsersController @Autowired constructor(
         return ResponseEntity.status(HttpStatus.OK).body(result)
     }
 
-    @PostMapping("/login")
-    fun loginUser(@RequestBody @Valid user: RequestLogin): ResponseEntity<ResponseUser> {
-
-    }
+//    @PostMapping("/login")
+//    fun loginUser(@RequestBody @Valid user: RequestLogin): ResponseEntity<ResponseUser> {
+//
+//    }
 }
