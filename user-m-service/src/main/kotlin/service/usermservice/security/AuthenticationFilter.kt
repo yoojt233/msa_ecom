@@ -39,6 +39,6 @@ class AuthenticationFilter : UsernamePasswordAuthenticationFilter() {
         chain: FilterChain?,
         authResult: Authentication?
     ) {
-        super.successfulAuthentication(request, response, chain, authResult)
+//        super.successfulAuthentication(request, response, chain, authResult)
     }
 }

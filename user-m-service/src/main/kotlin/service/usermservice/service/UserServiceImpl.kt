@@ -1,6 +1,7 @@
 package service.usermservice.service
 
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -14,14 +15,14 @@ import java.util.UUID
 @Service
 class UserServiceImpl @Autowired constructor(
     private val userRepository: UserRepository,
-    private val passwordEncoder: BCryptPasswordEncoder
+    private val bCryptPasswordEncoder: BCryptPasswordEncoder
 ) : UserService {
 
     override fun createUser(userDto: UserDto): UserDto {
         userDto.userId = UUID.randomUUID().toString()
 
         val userEntity = userDto.toUserEntity()
-        userEntity.encryptPwd(passwordEncoder.encode(userDto.pwd))
+        userEntity.encryptPwd(bCryptPasswordEncoder.encode(userDto.pwd))
         userRepository.save(userEntity)
 
         return userDto
@@ -42,8 +43,8 @@ class UserServiceImpl @Autowired constructor(
     }
 
     override fun loadUserByUsername(username: String?): UserDetails {
-        val userEntity = userRepository.findByEmail(username) ?: throw UsernameNotFoundException(username)
+        val userEntity = username?.let { userRepository.findByEmail(it) } ?: throw UsernameNotFoundException(username)
 
-
+        return User(userEntity.email, userEntity.encryptedPwd, true, true, true, true, ArrayList())
     }
 }
