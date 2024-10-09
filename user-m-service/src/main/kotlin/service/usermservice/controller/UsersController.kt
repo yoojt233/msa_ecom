@@ -60,9 +60,4 @@ class UsersController @Autowired constructor(
 
         return ResponseEntity.status(HttpStatus.OK).body(result)
     }
-
-//    @PostMapping("/login")
-//    fun loginUser(@RequestBody @Valid user: RequestLogin): ResponseEntity<ResponseUser> {
-//
-//    }
 }

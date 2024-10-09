@@ -1,6 +1,6 @@
 package service.usermservice.security
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import jakarta.servlet.FilterChain
 import jakarta.servlet.ServletException
 import jakarta.servlet.http.HttpServletRequest
@@ -16,8 +16,10 @@ class AuthenticationFilter : UsernamePasswordAuthenticationFilter() {
 
     @Throws(AuthenticationException::class)
     override fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse): Authentication {
+        val jom = jacksonObjectMapper()
+
         try {
-            val creds = ObjectMapper().readValue(request.inputStream, RequestLogin::class.java)
+            val creds = jom.readValue(request.inputStream, RequestLogin::class.java)
 
             return authenticationManager.authenticate(
                 UsernamePasswordAuthenticationToken(
