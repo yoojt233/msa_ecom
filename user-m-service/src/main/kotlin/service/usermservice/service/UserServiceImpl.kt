@@ -42,6 +42,12 @@ class UserServiceImpl @Autowired constructor(
         return userRepository.findAll()
     }
 
+    override fun getUserDetailByEmail(email: String): UserDto {
+        val userEntity = userRepository.findByEmail(email) ?: throw UsernameNotFoundException("User not found")
+
+        return UserDto.fromUserEntity(userEntity)
+    }
+
     override fun loadUserByUsername(username: String?): UserDetails {
         val userEntity = username?.let { userRepository.findByEmail(it) } ?: throw UsernameNotFoundException(username)
 
