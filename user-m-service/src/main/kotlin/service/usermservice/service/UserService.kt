@@ -8,4 +8,5 @@ interface UserService : UserDetailsService {
     fun createUser(userDto: UserDto): UserDto
     fun getUserByUserId(userId: String): UserDto
     fun getUserByAll(): Iterable<UserEntity>
+    fun getUserDetailByEmail(username: String): UserDto
 }

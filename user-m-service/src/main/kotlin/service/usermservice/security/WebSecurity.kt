@@ -46,9 +46,7 @@ class WebSecurity @Autowired constructor(
     }
 
     fun getAuthenticationFilter(authenticationManager: AuthenticationManager): AuthenticationFilter {
-        val filter = AuthenticationFilter()
-
-        filter.setAuthenticationManager(authenticationManager)
+        val filter = AuthenticationFilter(authenticationManager, userService, env)
 
         return filter
     }
