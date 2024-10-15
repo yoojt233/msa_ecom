@@ -48,8 +48,6 @@ class WebSecurity @Autowired constructor(
     fun getAuthenticationFilter(authenticationManager: AuthenticationManager): AuthenticationFilter {
         val filter = AuthenticationFilter(authenticationManager, userService, env)
 
-//        filter.setAuthenticationManager(authenticationManager)
-
         return filter
     }
 }

@@ -46,6 +46,16 @@ dependencies {
 
     // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-api
     implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
+
+    // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-api
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
+
+    // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-impl
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
+
+    // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-gson
+    implementation 'io.jsonwebtoken:jjwt-gson:0.12.6'
+
 }
 
 dependencyManagement {

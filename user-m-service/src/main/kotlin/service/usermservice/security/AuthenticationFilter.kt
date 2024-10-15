@@ -2,6 +2,7 @@ package service.usermservice.security
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.jsonwebtoken.Jwts
+import io.jsonwebtoken.io.Encoders
 import io.jsonwebtoken.security.Keys
 import jakarta.servlet.FilterChain
 import jakarta.servlet.ServletException
@@ -19,8 +20,6 @@ import service.usermservice.service.UserService
 import service.usermservice.vo.RequestLogin
 import java.io.IOException
 import java.util.*
-import kotlin.io.encoding.Base64
-import kotlin.io.encoding.ExperimentalEncodingApi
 
 class AuthenticationFilter(
     private val authenticationManager: AuthenticationManager,
@@ -57,6 +56,14 @@ class AuthenticationFilter(
         val username = (authResult!!.principal as User).username
         val userDto: UserDto = userService.getUserDetailByEmail(username)
 
+        val key = Keys.hmacShaKeyFor(Base64.getEncoder().encode(env.getProperty("token.secret")!!.toByteArray()))
+        val token = Jwts.builder()
+            .subject(userDto.userId)
+            .expiration(Date(System.currentTimeMillis() + env.getProperty("token.expiration_time")!!.toLong()))
+            .signWith(key)
+            .compact()
 
+        response!!.addHeader("token", token)
+        response.addHeader("userId", userDto.userId)
     }
 }
