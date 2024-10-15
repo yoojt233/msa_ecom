@@ -2,7 +2,6 @@ package service.usermservice.security
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.jsonwebtoken.Jwts
-import io.jsonwebtoken.io.Encoders
 import io.jsonwebtoken.security.Keys
 import jakarta.servlet.FilterChain
 import jakarta.servlet.ServletException
