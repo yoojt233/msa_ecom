@@ -2,6 +2,14 @@
 server:
   port: 8000
 
+#eureka
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8710/eureka
+
 #spring
 spring:
   application:
@@ -35,6 +43,7 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/user-m-service/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderFilter
 
         - id: catalog-m-service
           uri: lb://CATALOG-M-SERVICE
@@ -67,10 +76,6 @@ spring:
             preLogger: true
             postLogger: true
 
-#eureka
-eureka:
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: http://localhost:8710/eureka
+#token
+token:
+  secret: 한글로열여섯글자를채워보겠습니다
