@@ -1,0 +1,11 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name:config-m-service
+  cloud:
+    config:
+      server:
+        git:
+          uri: file:\\\D:\Book\local-git-repo
