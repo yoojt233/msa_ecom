@@ -34,8 +34,8 @@ class WebSecurity @Autowired constructor(
             .authorizeHttpRequests { authorize ->
                 authorize
                     .requestMatchers(PathRequest.toH2Console()).permitAll()
-                    .requestMatchers("/**")
-                    .access(WebExpressionAuthorizationManager("hasIpAddress('127.0.0.1')"))
+                    .requestMatchers("/actuator/**").permitAll()
+                    .requestMatchers("/**").access(WebExpressionAuthorizationManager("hasIpAddress('127.0.0.1')"))
                     .anyRequest().authenticated()
             }
             .authenticationManager(authenticationManager)
