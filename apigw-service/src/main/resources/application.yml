@@ -45,6 +45,15 @@ spring:
             - RewritePath=/user-m-service/(?<segment>.*), /$\{segment}
             - AuthorizationHeaderFilter
 
+        - id: user-m-service
+          uri: lb://USER-M-SERVICE
+          predicates:
+            - Path=/user-m-service/actuator/**
+            - Method=GET,POST
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/user-m-service/(?<segment>.*), /$\{segment}
+
         - id: catalog-m-service
           uri: lb://CATALOG-M-SERVICE
           predicates:
