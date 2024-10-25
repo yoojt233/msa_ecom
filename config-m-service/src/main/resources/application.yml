@@ -1,0 +1,19 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name:config-m-service
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/yoojt233/spring-cloud-config.git
+
+#          If I use Private repository not Public
+#          username: [ID]
+#          password: [PW]
+
+#        If I use native file path instead of git repository
+#        native:
+#          search-locations: file:///${user.home}/[FilePath]

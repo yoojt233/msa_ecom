@@ -24,9 +24,11 @@ eureka:
     service-url:
       defaultZone: http://127.0.0.1:8710/eureka
 
-token:
-  expiration_time: 86400000
-  secret: 한글로열여섯글자를채워보겠습니다
-
 greeting:
   message: Welcome to the Simple E-Commerce.
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh, health, beans

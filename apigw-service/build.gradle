@@ -39,6 +39,15 @@ dependencies {
     // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-gson
     implementation 'io.jsonwebtoken:jjwt-gson:0.12.6'
 
+    // https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-config
+    implementation 'org.springframework.cloud:spring-cloud-starter-config:4.1.3'
+
+    // https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-bootstrap
+    implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap:4.1.4'
+
+    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-actuator
+    implementation 'org.springframework.boot:spring-boot-starter-actuator:3.3.3'
+
 }
 
 dependencyManagement {

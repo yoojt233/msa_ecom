@@ -45,6 +45,15 @@ spring:
             - RewritePath=/user-m-service/(?<segment>.*), /$\{segment}
             - AuthorizationHeaderFilter
 
+        - id: user-m-service
+          uri: lb://USER-M-SERVICE
+          predicates:
+            - Path=/user-m-service/actuator/**
+            - Method=GET,POST
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/user-m-service/(?<segment>.*), /$\{segment}
+
         - id: catalog-m-service
           uri: lb://CATALOG-M-SERVICE
           predicates:
@@ -76,6 +85,8 @@ spring:
             preLogger: true
             postLogger: true
 
-#token
-token:
-  secret: 한글로열여섯글자를채워보겠습니다
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh, health, beans, httptrace

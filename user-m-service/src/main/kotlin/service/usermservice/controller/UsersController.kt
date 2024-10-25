@@ -22,7 +22,13 @@ class UsersController @Autowired constructor(
 
     @GetMapping("/health-check")
     fun status(request: HttpServletRequest): String {
-        return String.format("It's Working in User Service on Port %s", request.serverPort)
+        return String.format(
+            "It's Working in User Service"
+                    + ", port(local.server.port)=" + env.getProperty("local.server.port")
+                    + ", port(server.port)=" + env.getProperty("server.port")
+                    + ", with token secret=" + env.getProperty("token.secret")
+                    + ", with token time=" + env.getProperty("token.expiration_time")
+        )
     }
 
     @GetMapping("/welcome")
