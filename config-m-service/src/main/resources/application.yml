@@ -3,13 +3,17 @@ server:
 
 spring:
   application:
-    name:config-m-service
+    name: config-m-service
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
   cloud:
     config:
       server:
         git:
           uri: https://github.com/yoojt233/spring-cloud-config.git
-
 #          If I use Private repository not Public
 #          username: [ID]
 #          password: [PW]
@@ -17,3 +21,9 @@ spring:
 #        If I use native file path instead of git repository
 #        native:
 #          search-locations: file:///${user.home}/[FilePath]
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh,health,busrefresh
