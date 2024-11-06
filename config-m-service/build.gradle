@@ -37,7 +37,7 @@ dependencies {
 
     // https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-bus-amqp
     implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp:4.1.2'
-
+    
 }
 
 dependencyManagement {
