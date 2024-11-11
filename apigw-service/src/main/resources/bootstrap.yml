@@ -1,7 +1,7 @@
 spring:
   cloud:
     config:
-      name: config-m-service
+      name: application
       uri: http://127.0.0.1:8888
 
 #  profiles:
