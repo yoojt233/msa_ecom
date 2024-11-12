@@ -1,4 +1,4 @@
-package service.usermservice.security
+package service.usermservice.provider
 
 import org.springframework.context.annotation.Bean
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -8,5 +8,5 @@ import org.springframework.stereotype.Component
 class PasswordEncoderProvider {
 
     @Bean
-    fun init(): BCryptPasswordEncoder = BCryptPasswordEncoder()
+    fun getBCryptPasswordEncoder(): BCryptPasswordEncoder = BCryptPasswordEncoder()
 }
