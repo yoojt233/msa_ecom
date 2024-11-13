@@ -1,19 +1,16 @@
 package service.usermservice.service
 
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.core.ParameterizedTypeReference
 import org.springframework.core.env.Environment
-import org.springframework.http.HttpMethod
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
-import org.springframework.web.client.RestTemplate
+import service.usermservice.client.OrderServiceClient
 import service.usermservice.dto.UserDto
 import service.usermservice.entity.UserEntity
 import service.usermservice.repository.UserRepository
-import service.usermservice.vo.ResponseOrder
 import java.util.*
 
 @Service
@@ -21,7 +18,8 @@ class UserServiceImpl @Autowired constructor(
     private val env: Environment,
     private val userRepository: UserRepository,
     private val bCryptPasswordEncoder: BCryptPasswordEncoder,
-    private val restTemplate: RestTemplate
+    private val orderServiceClient: OrderServiceClient
+//    private val restTemplate: RestTemplate
 ) : UserService {
 
     override fun createUser(userDto: UserDto): UserDto {
@@ -39,17 +37,19 @@ class UserServiceImpl @Autowired constructor(
         val userDto = UserDto.fromUserEntity(userEntity)
 
 //        val orders = ArrayList<ResponseOrder>()
-        println("Which I using RestTemplate Object is ${restTemplate.toString()} and ${restTemplate.hashCode()}")
 
-        val orderUrl = String.format(env.getProperty("order_service.url")!!, userId)
-        val responseOrderList = restTemplate.exchange(
-            orderUrl,
-            HttpMethod.GET,
-            null,
-            object : ParameterizedTypeReference<List<ResponseOrder>>() {}
-        )
+//        val orderUrl = String.format(env.getProperty("order_service.url")!!, userId)
+//        val responseOrderList = restTemplate.exchange(
+//            orderUrl,
+//            HttpMethod.GET,
+//            null,
+//            object : ParameterizedTypeReference<List<ResponseOrder>>() {}
+//        )
+//        val orderList = responseOrderList.body
 
-        userDto.orders = responseOrderList.body!!
+        val orderList = orderServiceClient.getOrders(userId)
+
+        userDto.orders = orderList
 
         return userDto
     }
