@@ -13,7 +13,7 @@ data class UserDto(
     var userId: String,
     var createdAt: Date,
     var encryptedPwd: String?,
-    var orders: List<ResponseOrder>
+    var orders: List<ResponseOrder>?
 ) {
     constructor(requestUser: RequestUser) : this(
         requestUser.email,

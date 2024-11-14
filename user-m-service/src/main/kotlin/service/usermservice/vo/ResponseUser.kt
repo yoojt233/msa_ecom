@@ -9,7 +9,7 @@ data class ResponseUser(
     val email: String,
     val name: String,
     val userId: String,
-    val orders: List<ResponseOrder>
+    val orders: List<ResponseOrder>?
 ) {
     constructor(userDto: UserDto) : this(userDto.email, userDto.name, userDto.userId, userDto.orders)
 
