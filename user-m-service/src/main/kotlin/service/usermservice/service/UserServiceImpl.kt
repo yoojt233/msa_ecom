@@ -1,5 +1,6 @@
 package service.usermservice.service
 
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.env.Environment
 import org.springframework.security.core.userdetails.User
@@ -18,7 +19,7 @@ class UserServiceImpl @Autowired constructor(
     private val env: Environment,
     private val userRepository: UserRepository,
     private val bCryptPasswordEncoder: BCryptPasswordEncoder,
-    private val orderServiceClient: OrderServiceClient
+    private val orderServiceClient: OrderServiceClient,
 //    private val restTemplate: RestTemplate
 ) : UserService {
 
@@ -47,6 +48,11 @@ class UserServiceImpl @Autowired constructor(
 //        )
 //        val orderList = responseOrderList.body
 
+//        val orderList =
+//            kotlin.runCatching { orderServiceClient.getOrders(userId) }
+//                .onFailure { logger.error(it.message) }
+//                .getOrNull()
+
         val orderList = orderServiceClient.getOrders(userId)
 
         userDto.orders = orderList
@@ -68,5 +74,9 @@ class UserServiceImpl @Autowired constructor(
         val userEntity = username?.let { userRepository.findByEmail(it) } ?: throw UsernameNotFoundException(username)
 
         return User(userEntity.email, userEntity.encryptedPwd, true, true, true, true, ArrayList())
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(UserServiceImpl::class.java)
     }
 }
