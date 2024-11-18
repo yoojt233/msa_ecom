@@ -19,7 +19,7 @@ data class CatalogEntity(
     val productName: String,
 
     @Column(nullable = false)
-    val stock: Int,
+    var stock: Int,
 
     @Column(nullable = false)
     val unitPrice: Int,
