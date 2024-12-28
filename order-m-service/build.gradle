@@ -38,6 +38,9 @@ dependencies {
     // https://mvnrepository.com/artifact/org.postgresql/postgresql
     implementation 'org.postgresql:postgresql:42.7.3'
 
+    // https://mvnrepository.com/artifact/org.springframework.amqp/spring-rabbit-stream
+    implementation 'org.springframework.amqp:spring-rabbit-stream:3.1.7'
+
 }
 
 dependencyManagement {

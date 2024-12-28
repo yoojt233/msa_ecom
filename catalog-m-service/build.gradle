@@ -30,12 +30,10 @@ dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-reflect'
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    runtimeOnly 'com.h2database:h2'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.jetbrains.kotlin:kotlin-test-junit5'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
-    // https://mvnrepository.com/artifact/com.h2database/h2
-    runtimeOnly("com.h2database:h2:2.2.224")
 
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-amqp
     implementation 'org.springframework.boot:spring-boot-starter-amqp:3.1.7'

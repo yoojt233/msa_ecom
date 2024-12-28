@@ -19,18 +19,18 @@ class RabbitConsumer(private val catalogRepository: CatalogRepository) {
     */
     @PostConstruct
     fun updateQty() {
-        val stream = "qty_test"
+        val stream = "qty"
 
         declare(stream)
 
         val consumer = env.consumerBuilder()
             .stream(stream)
             .offset(OffsetSpecification.next())
-            .name("qty_test")
+            .name("qty-consumer")
             .manualTrackingStrategy()
             .builder()
             .messageHandler { context, message ->
-                kotlin.runCatching {
+                runCatching {
                     objectMapper.readValue(message.bodyAsBinary, object : TypeReference<Map<String, Any>>() {})
                 }.onSuccess {
                     val entity = catalogRepository.findByProductId(it["productId"] as String)

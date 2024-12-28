@@ -1,20 +1,25 @@
 package service.ordermservice.service
 
 import jakarta.ws.rs.NotFoundException
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import service.ordermservice.dto.OrderDto
 import service.ordermservice.entity.OrderEntity
+import service.ordermservice.mq.RabbitProducer
 import service.ordermservice.repository.OrderRepository
-import java.util.*
 
 @Service
-class OrderServiceImpl(val orderRepository: OrderRepository) {
+class OrderServiceImpl @Autowired constructor(
+    val orderRepository: OrderRepository,
+    val rabbitProducer: RabbitProducer
+) {
     fun createOrder(orderDetails: OrderDto): OrderDto {
-        orderDetails.orderId = UUID.randomUUID().toString()
-        orderDetails.totalPrice = orderDetails.qty * orderDetails.unitPrice
-
         val orderEntity = orderDetails.toOrderEntity()
 
+        // mq
+        rabbitProducer.sendQty("qty", orderDetails)
+
+        // jpa
         orderRepository.save(orderEntity)
 
         return OrderDto.fromOrderEntity(orderEntity)

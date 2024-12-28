@@ -23,9 +23,9 @@ spring:
   rabbitmq:
     stream:
       port: 5552
-      username: guest
-      password: guest
-      host: localhost
+      username: admin
+      password: admin
+      host: 127.0.0.1
 
 eureka:
   client:
