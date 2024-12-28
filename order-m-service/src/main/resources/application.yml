@@ -15,10 +15,10 @@ spring:
       ddl-auto: update
     database: postgresql
   datasource:
-    url: jdbc:postgresql://192.168.213.130:5432/test_db
+    url: jdbc:postgresql://localhost:5432/ecom
     driver-class-name: org.postgresql.Driver
-    username: test
-    password: test
+    username: esta
+    password: zxcv3210
 
 eureka:
   client:

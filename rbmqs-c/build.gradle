@@ -1,0 +1,31 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '2.0.0'
+}
+
+group = 'service'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.jetbrains.kotlin:kotlin-test'
+
+    // https://mvnrepository.com/artifact/com.rabbitmq/stream-client
+    implementation 'com.rabbitmq:stream-client:0.21.0'
+
+    // https://mvnrepository.com/artifact/org.mongodb/mongodb-driver-sync
+    implementation 'org.mongodb:mongodb-driver-sync:5.2.0'
+
+    // https://mvnrepository.com/artifact/com.fasterxml.jackson.module/jackson-module-kotlin
+    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.18.2'
+
+}
+
+test {
+    useJUnitPlatform()
+}
+kotlin {
+    jvmToolchain(21)
+}
