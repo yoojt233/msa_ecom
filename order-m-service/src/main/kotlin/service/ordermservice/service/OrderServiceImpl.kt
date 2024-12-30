@@ -12,8 +12,8 @@ import service.ordermservice.repository.OrderRepository
 class OrderServiceImpl @Autowired constructor(
     val orderRepository: OrderRepository,
     val rabbitProducer: RabbitProducer
-) {
-    fun createOrder(orderDetails: OrderDto): OrderDto {
+) : OrderService {
+    override fun createOrder(orderDetails: OrderDto): OrderDto {
         val orderEntity = orderDetails.toOrderEntity()
 
         // mq
@@ -25,14 +25,14 @@ class OrderServiceImpl @Autowired constructor(
         return OrderDto.fromOrderEntity(orderEntity)
     }
 
-    fun getOrderByOrderId(orderId: String): OrderDto {
+    override fun getOrderByOrderId(orderId: String): OrderDto {
         val orderEntity =
             orderRepository.findByOrderId(orderId) ?: throw NotFoundException("There is no order with id $orderId")
 
         return OrderDto.fromOrderEntity(orderEntity)
     }
 
-    fun getOrdersByUserId(userId: String): Iterable<OrderEntity> {
+    override fun getOrdersByUserId(userId: String): Iterable<OrderEntity> {
         return orderRepository.findByUserId(userId)
     }
 }

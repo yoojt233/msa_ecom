@@ -5,8 +5,8 @@ import service.catalogmservice.entity.CatalogEntity
 import service.catalogmservice.repository.CatalogRepository
 
 @Service
-class CatalogServiceImpl(val catalogRespository: CatalogRepository) {
-    fun getAllCatalogs(): Iterable<CatalogEntity> {
+class CatalogServiceImpl(val catalogRespository: CatalogRepository) : CatalogService {
+    override fun getAllCatalogs(): Iterable<CatalogEntity> {
         return catalogRespository.findAll()
     }
 }
