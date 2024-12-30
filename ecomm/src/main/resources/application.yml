@@ -5,7 +5,7 @@ spring:
 
 #port
 server:
-  port: 8710
+  port: 8761
 
 #eureka
 eureka:
