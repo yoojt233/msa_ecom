@@ -41,6 +41,19 @@ dependencies {
     // https://mvnrepository.com/artifact/org.springframework.amqp/spring-rabbit-stream
     implementation 'org.springframework.amqp:spring-rabbit-stream:3.1.7'
 
+    // https://mvnrepository.com/artifact/io.kotest/kotest-assertions-core-jvm
+    testImplementation 'io.kotest:kotest-assertions-core-jvm:5.9.1'
+
+    // https://mvnrepository.com/artifact/io.kotest/kotest-runner-junit5-jvm
+    testImplementation 'io.kotest:kotest-runner-junit5-jvm:5.9.1'
+
+    // https://mvnrepository.com/artifact/io.mockk/mockk-jvm
+    testImplementation 'io.mockk:mockk-jvm:1.13.16'
+
+    // https://mvnrepository.com/artifact/org.mockito.kotlin/mockito-kotlin
+    testImplementation 'org.mockito.kotlin:mockito-kotlin:5.4.0'
+
+    testImplementation 'io.kotest.extensions:kotest-extensions-spring:1.1.2'
 }
 
 dependencyManagement {
