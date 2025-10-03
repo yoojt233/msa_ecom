@@ -5,15 +5,16 @@ spring:
   application:
     name: config-m-service
   rabbitmq:
-    host: 127.0.0.1
+    host: rbmq
     port: 5672
-    username: admin
-    password: admin
+    username: guest
+    password: guest
   cloud:
     config:
       server:
         git:
           uri: https://github.com/yoojt233/spring-cloud-config.git
+#          default-label: dev
 #          If I use Private repository not Public
 #          username: [ID]
 #          password: [PW]

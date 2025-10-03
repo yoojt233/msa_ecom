@@ -1,11 +1,15 @@
 package service
 
-import service.rabbit.RabbitConsumeImpl
+import com.rabbitmq.stream.Environment
+import service.rabbit.RabbitConsumer
 
 fun main() {
-    val table = "orders"
-    val db = "ecom"
-    val rabbit = RabbitConsumeImpl()
+    val env = Environment.builder().build()
+    val rabbitConsumer = RabbitConsumer(env)
 
-    rabbit.start(db, table)
+    Runtime.getRuntime().addShutdownHook(Thread {
+        rabbitConsumer.close()
+    })
+
+    rabbitConsumer.start()
 }

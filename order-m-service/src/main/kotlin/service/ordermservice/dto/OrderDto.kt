@@ -1,16 +1,17 @@
 package service.ordermservice.dto
 
-import service.ordermservice.entity.OrderEntity
+import service.ordermservice.entity.MongoOrderEntity
+import service.ordermservice.entity.RdbOrderEntity
 import service.ordermservice.vo.RequestOrder
 import service.ordermservice.vo.ResponseOrder
 import java.io.Serializable
+import java.util.UUID
 
 data class OrderDto(
     var productId: String,
     var qty: Int,
     var unitPrice: Int,
     var totalPrice: Int,
-
     var orderId: String,
     var userId: String
 ) : Serializable {
@@ -18,13 +19,13 @@ data class OrderDto(
         requestOrder.productId,
         requestOrder.qty,
         requestOrder.unitPrice,
-        0,
-        "",
+        requestOrder.qty * requestOrder.unitPrice,
+        UUID.randomUUID().toString(),
         ""
     )
 
-    fun toOrderEntity(): OrderEntity {
-        return OrderEntity(this)
+    fun toOrderEntity(): RdbOrderEntity {
+        return RdbOrderEntity(this)
     }
 
     fun toResponseOrder(): ResponseOrder {
@@ -32,14 +33,25 @@ data class OrderDto(
     }
 
     companion object {
-        fun fromOrderEntity(orderEntity: OrderEntity): OrderDto {
+        fun fromOrderEntity(rdbOrderEntity: RdbOrderEntity): OrderDto {
             return OrderDto(
-                orderEntity.productId,
-                orderEntity.qty,
-                orderEntity.unitPrice,
-                orderEntity.totalPrice,
-                orderEntity.orderId,
-                orderEntity.userId
+                rdbOrderEntity.productId,
+                rdbOrderEntity.qty,
+                rdbOrderEntity.unitPrice,
+                rdbOrderEntity.totalPrice,
+                rdbOrderEntity.orderId,
+                rdbOrderEntity.userId
+            )
+        }
+
+        fun fromOrderEntity(mongoOrderEntity: MongoOrderEntity): OrderDto {
+            return OrderDto(
+                mongoOrderEntity.productId,
+                mongoOrderEntity.qty,
+                mongoOrderEntity.unitPrice,
+                mongoOrderEntity.totalPrice,
+                mongoOrderEntity.orderId,
+                mongoOrderEntity.userId
             )
         }
     }

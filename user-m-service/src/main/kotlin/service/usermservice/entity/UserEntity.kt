@@ -1,11 +1,8 @@
 package service.usermservice.entity
 
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.Id
-import jakarta.persistence.Table
+import jakarta.persistence.*
 import service.usermservice.dto.UserDto
+import java.io.Serializable
 
 @Entity
 @Table(name = "users")
@@ -25,7 +22,7 @@ data class UserEntity(
 
     @Column(nullable = false, unique = true)
     var encryptedPwd: String
-) {
+): Serializable {
     constructor() : this(0L, "", "", "", "")
     constructor(userDto: UserDto) : this(0L, userDto.email, userDto.name, userDto.userId, "")
 

@@ -2,43 +2,41 @@ package service.catalogmservice.mq
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.rabbitmq.stream.Environment
 import com.rabbitmq.stream.OffsetSpecification
+import com.rabbitmq.stream.impl.StreamEnvironmentBuilder
 import jakarta.annotation.PostConstruct
 import org.springframework.stereotype.Service
-import service.catalogmservice.repository.CatalogRepository
+import service.catalogmservice.service.CatalogService
 
 @Service
-class RabbitConsumer(private val catalogRepository: CatalogRepository) {
+class RabbitConsumer(private val catalogService: CatalogService) {
     val objectMapper = ObjectMapper()
-    val env = Environment.builder().build()
+    val env = StreamEnvironmentBuilder().build()
 
     /*
     * protect data loss, set to store offset and start next from last stored
     * must define 'name' to use this function
     */
     @PostConstruct
-    fun updateQty() {
-        val stream = "qty"
+    fun rollbackConsumer() {
+        val stream = "rollback"
 
         declare(stream)
 
-        val consumer = env.consumerBuilder()
+        env.consumerBuilder()
             .stream(stream)
             .offset(OffsetSpecification.next())
-            .name("qty-consumer")
+            .name("rollbackConsumer-in-0")
             .manualTrackingStrategy()
             .builder()
             .messageHandler { context, message ->
                 runCatching {
                     objectMapper.readValue(message.bodyAsBinary, object : TypeReference<Map<String, Any>>() {})
                 }.onSuccess {
-                    val entity = catalogRepository.findByProductId(it["productId"] as String)
+                    val productId = it["productId"] as String
+                    val qty = it["qty"] as Int
 
-                    if (entity != null) {
-                        entity.stock -= it["qty"] as Int
-                        catalogRepository.save(entity)
-                    }
+                    catalogService.updateStock(productId, -qty)
 
                     context.storeOffset()
                 }.onFailure { e ->

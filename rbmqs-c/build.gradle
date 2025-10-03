@@ -9,6 +9,23 @@ repositories {
     mavenCentral()
 }
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'service.MainKt'
+    }
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
 dependencies {
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
 
@@ -20,6 +37,9 @@ dependencies {
 
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.module/jackson-module-kotlin
     implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.18.2'
+
+    // https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-yaml
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.18.3'
 
 }
 

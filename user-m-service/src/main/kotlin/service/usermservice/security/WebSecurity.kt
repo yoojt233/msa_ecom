@@ -33,9 +33,10 @@ class WebSecurity @Autowired constructor(
             .csrf { it.disable() }
             .authorizeHttpRequests { authorize ->
                 authorize
-                    .requestMatchers(PathRequest.toH2Console()).permitAll()
                     .requestMatchers("/actuator/**").permitAll()
-                    .requestMatchers("/**").access(WebExpressionAuthorizationManager("hasIpAddress('127.0.0.1')"))
+                    .requestMatchers("/**")
+//                    .access(WebExpressionAuthorizationManager("hasIpAddress('${env.getProperty("gateway.ip")}')"))
+                    .access(WebExpressionAuthorizationManager("hasIpAddress('127.0.0.1')"))
                     .anyRequest().authenticated()
             }
             .authenticationManager(authenticationManager)

@@ -1,0 +1,6 @@
+spring:
+  cloud:
+    config:
+      uri: http://config-m-service:8888
+#      uri: http://localhost:8888
+      name: catalog-m-service

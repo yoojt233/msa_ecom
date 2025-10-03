@@ -1,5 +1,6 @@
 package service.usermservice.controller
 
+import io.micrometer.core.annotation.Timed
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
@@ -21,6 +22,7 @@ class UsersController @Autowired constructor(
 ) {
 
     @GetMapping("/health-check")
+    @Timed(value = "users.status", longTask = true)
     fun status(request: HttpServletRequest): String {
         return String.format(
             "It's Working in User Service"
@@ -32,6 +34,7 @@ class UsersController @Autowired constructor(
     }
 
     @GetMapping("/welcome")
+    @Timed(value = "users.welcome", longTask = true)
     fun welcome(): String {
         return greeting.getMessage() ?: "Hello world"
 //        return env.getProperty("greeting") ?: "Hello world"

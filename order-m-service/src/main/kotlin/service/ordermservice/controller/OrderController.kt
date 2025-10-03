@@ -1,47 +1,62 @@
 package service.ordermservice.controller
 
+import io.micrometer.core.annotation.Timed
 import jakarta.servlet.http.HttpServletRequest
-import org.springframework.http.HttpStatus
+import org.apache.hc.core5.http.HttpStatus
+import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import service.ordermservice.dto.OrderDto
 import service.ordermservice.service.OrderService
 import service.ordermservice.vo.RequestOrder
 import service.ordermservice.vo.ResponseOrder
-import java.util.*
 
 @RestController
 @RequestMapping("/order-m-service")
 class OrderController(val orderService: OrderService) {
+    private val logger = LoggerFactory.getLogger(OrderController::class.java)
 
     @GetMapping("/health-check")
+    @Timed(value = "orders.status", longTask = true)
     fun status(request: HttpServletRequest): String {
         return String.format("It's Working in Order Service on Port %s", request.serverPort)
     }
 
-    @PostMapping("/{userId}/orders")
+    @PostMapping("/{userId}/order")
     fun createOrder(
         @PathVariable("userId") userId: String,
-        @RequestBody orderDetails: RequestOrder
+        @RequestBody requestOrder: RequestOrder
     ): ResponseEntity<ResponseOrder> {
-        val orderDto = OrderDto(orderDetails)
+        logger.info("Before add orders data.")
+
+        val orderDto = OrderDto(requestOrder)
 
         orderDto.userId = userId
-        orderDto.orderId = UUID.randomUUID().toString()
-        orderDto.totalPrice = orderDetails.qty * orderDetails.unitPrice
-
         orderService.createOrder(orderDto)
+
+        logger.info("After added orders data.")
 
         val res = orderDto.toResponseOrder()
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(res)
+        return ResponseEntity.status(HttpStatus.SC_CREATED).body(res)
     }
 
     @GetMapping("/{userId}/orders")
-    fun getOrder(@PathVariable("userId") userId: String): ResponseEntity<List<ResponseOrder>> {
+    fun getUserOrders(@PathVariable("userId") userId: String): ResponseEntity<List<ResponseOrder>> {
+        logger.info("Before retrieve orders data.")
+
         val orderList = orderService.getOrdersByUserId(userId)
         val res = orderList.map { ResponseOrder(it) }.toList()
 
-        return ResponseEntity.status(HttpStatus.OK).body(res)
+        logger.info("After retrieved orders data.")
+
+        return ResponseEntity.status(HttpStatus.SC_OK).body(res)
+    }
+
+    @DeleteMapping("/{orderId}/order")
+    fun cacelOrder(@PathVariable("orderId") orderId: String): ResponseEntity<ResponseOrder> {
+        orderService.cancelOrderByOrderId(orderId)
+
+        return ResponseEntity.status(HttpStatus.SC_OK).build<ResponseOrder>()
     }
 }

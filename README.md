@@ -1,101 +1,45 @@
-# Ecommerce-MSA
+# 🚀 E-commerce MSA Project with Spring Cloud & Kotlin
 
-# 개요
+## 📝 프로젝트 개요 (Overview)
 
-## 프로젝트 소개
+**Spring Cloud**와 **Kotlin**을 이용하여 **MSA(Micro Service Architecture)** 기반의 E-commerce 서버를 개발하는 클론 코딩 프로젝트.
 
-### 목표
+다양한 기술 스택을 경험하고 MSA 환경에서의 여러 문제 해결 능력을 기르는 것을 목표로, 필요에 따라 기존 설계를 변형하고 개선하며 진행했다.
 
-- Spring Cloud를 이용하여 Micro Service Architecture(이하 MSA) 형태의 E-commerce 서버 개발.
-- 인프런 강의를 기반한 클론 코딩으로 필요에 따라 상황에 맞게 변형하며 진행.
-- 목적에 맞게 기술 스택을 선정하되 다양한 기술 스택을 경험.
+<br>
 
-### 구성도
+## 🏗️ 아키텍처 구성도 (Architecture)
 
-- 현재까지의 구성도.
-  ![Web_App_Reference_Architecture](https://github.com/user-attachments/assets/2b9f89fe-1fc2-4f27-b17f-44ea507b8b5b)
+<br>
 
-**Language**
+## 🛠️ 기술 스택 (Tech Stack)
 
-- _Kotlin 1.9.25_
+| 구분 | 기술 |
+| --- | --- |
+| **Language** | `Kotlin 1.9.25` |
+| **Framework** | `Spring Boot 3.3.3` |
+| **MSA Common** | `Spring Cloud Gateway`, `Eureka Server`, `Spring Cloud Config` |
+| **Database** | `PostgreSQL 15`, `MongoDB 8.0.4` |
+| **Message Queue** | `RabbitMQ 4.0`, `Spring Cloud Bus` |
+| **CDC Platform** | `Debezium 2.7.3` |
+| **API Communication** | `Spring Cloud OpenFeign`, `Resilience4j` (Circuit Breaker) |
+| **Monitoring** | `Micrometer`, `Zipkin`, `Prometheus`, `Grafana` |
+| **Security** | `Spring Security`, `JWT` |
 
-**Framework**
+<br>
 
-- _Spring Boot 3.3.3_
+## ✨ 주요 기능 및 상세 구현
 
-**Service Registry**
+### 1. Service Discovery & API Gateway
 
-- _Spring Cloud Netflix Eureka Server 4.1.2_
+* **Service Registry**: **Spring Cloud Netflix Eureka**를 Service Registry로 사용하여 각 Microservice를 등록하고 관리한다.
+* **API Gateway**: **Spring Cloud Gateway**를 도입하여 전체 서비스의 진입점을 단일화했다.
+    * Netflix Zuul의 동기/블로킹 방식의 한계를 극복하고, 비동기/논블로킹 처리를 위해 Spring 공식 문서에서 권장하는 Spring Cloud Gateway를 채택했다.
+    * Service별 **라우팅 규칙**과 **전역/개별 필터**를 적용하여 인증, 로깅, 경로 재작성 등의 공통 기능을 처리한다.
 
-**API Gateway**
-
-- _Spring Cloud Gateway 4.1.4_
-
-**Microservice**
-
-- User Service
-  - _Spring Security 3.3.2_
-  - _Spring Cloud OpenFeign 4.1.3_
-- Order Service
-- Catalog Service
-
-**Config Server**
-
-- _Spring Cloud Config 4.1.3_
-
-**Message Queue Handler**
-
-- _Spring Cloud Bus 4.1.2_
-
-**Docker**
-
-- Database
-  - _PostgreSQL 15_
-  - _MongoDB 8.0.4_
-- Message Queue
-  - _RabbitMQ 4.0_
-- CDC Platform
-  - _Debezium 2.7.3.Final_
-
-# 본론
-
-## 애플리케이션 구성 및 개발
-
-### Client Side Discovery
-
-- Spring Cloud Netflix Eureka Server를 Service Registry로 사용해 Microservice들을 등록한다.
-- IP Address:Port로 접속해서 등록된 Service들을 확인할 수 있다. (Ex. localhost:8761)
-
-![Spring_Eureka_Server](https://github.com/user-attachments/assets/463cf3ad-9360-4501-8cb4-b50a3a1d1922)
-
-### API Gateway
-
-- API Gateway로 Spring Cloud Gateway을 사용하였다.
-  → Netflix Zuul의 경우 비동기 문제로 maintenance가 되어 개발 및 패치가 중단되었다.
-  → 공식 문서 또한 Spring Cloud Gateway를 권장하고 있다.
-
+##### API Gateway 설정 예시 (`application.yml`)
 ```yaml
-#server
-server:
-  port: 8000
-
-#eureka
-eureka:
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: http://localhost:8761/eureka
-
-#spring
 spring:
-  application:
-    name: apigw-service
-  rabbitmq:
-    host: 127.0.0.1
-    port: 5672
-    username: guest
-    password: guest
   cloud:
     gateway:
       routes:
@@ -166,22 +110,15 @@ spring:
             baseMessage: Spring Cloud Gateway GlobalFilter
             preLogger: true
             postLogger: true
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: refresh,health,beans,httptrace,busrefresh
 ```
 
-- Service 별 Routing을 설정해준다.
-- Service마다 Filter를 적용할 수 있다.
-  → GET Method로 User Service에 전송되는 Request에 AuthorizationHeaderFilter를 적용시켜 인증 작업을 수행도록 한다.
-  → RewritePath에 특정한 방식으로 URL을 변경하거나 다른 EndPoint로 Redirection할 수 있다. (RewritePath에 쓰이는 방식은 정규 표현식이 아니라고 한다.)
+### 2. 인증 및 인가 (Spring Security & JWT)
 
-### 인증 및 인가
+* **인증 (Authentication)**: `User-Service`에서 **Spring Security**의 `UsernamePasswordAuthenticationFilter`를 커스터마이징하여 로그인 인증을 처리한다.
+* **인가 (Authorization)**: 인증 성공 시 **JWT(JSON Web Token)**를 발급하며, API Gateway의 커스텀 필터(`AuthorizationHeaderFilter`)에서 각 요청의 토큰을 검증하여 서비스 접근 권한을 제어한다.
 
-```yaml
+##### JWT 발급 로직 (`successfulAuthentication`)
+```kotlin
 class AuthenticationFilter(
     private val authenticationManager: AuthenticationManager,
     private val userService: UserService,
@@ -229,115 +166,131 @@ class AuthenticationFilter(
     }
 }
 ```
+### 3. 설정 정보 중앙 관리 및 동기화
 
-- User Service에 Spring Security를 사용하여 인증, 인가에 대한 기능을 작성하였다.
-  → 쉽게 생각해서 인증은 로그인, 인가는 권한.
-- `UsernamePasswordAuthenticationFilter`를 상속받은 `AuthenticationFilter`에 의해 로그인을 위한 Request는 Intercept되어 `attemptAuthentication()` 가 실행된다.
-  → `attemptAuthentication()` ⇒ `ProvideManager.authentication()` ⇒ `AbstractUserDetailAuthenticationProvider.authentication()`
-- 위의 `attempAuthentication()`에 exception 없이 성공하게 되면 `successfulAuthentication()` 로 넘어가게 된다.
-  → Spring Cloud Config에서 설정한 값을 사용해 encoding에 사용할 키를 만든다.
-  → 키를 사용해 토큰을 생성한다.
-- 이후 권한이 필요한 Service의 작업은 API Gateway에서 설정한 `AuthorizationHeaderFilter.apply()` 에서 검사 후 해당 Service로 Request를 보내게 된다.
+* **중앙화**: **Spring Cloud Config**를 사용하여 각 Microservice의 설정 정보(`*.yml`)를 중앙에서 통합 관리한다.
+* **암호화**: `JKS` 키스토어를 이용해 DB 접속 정보 등 민감한 설정 값을 암호화하여 보안을 강화했다.
+* **동적 refresh**: **Spring Cloud Bus**와 **RabbitMQ**를 연동하여, Config Server의 설정 변경 시 `/actuator/busrefresh` 엔드포인트 호출만으로 모든 서비스에 변경 사항을 실시간으로 전송한다.
 
-## CDC 환경 구축 및 구성
+---
 
-### Source
+### 4. 서비스 간 통신 및 장애 관리
 
-- CDC를 위해 선택한 기술 스택은 다음과 같다.
-  - **PostgreSQL** : Microservice 들의 Request를 C, U, D할 Source DB.
-    → source DB를 선택한 요구 사항은 트랜잭션 기능을 가진 RDBMS로 대부분의 RDBMS가 가능하다.
-    → 많은 DB들 중에서도 트래픽에 따른 Insert, Update, Delete 별 성능, MVCC에 따른 내부 로직 등의 차이가 있겠지만 클론 코딩의 특성 상 그 차이를 실감할 수 없다고 판단하여 평소에 써보지 않았으며 많은 사람들이 사용하는 PostgreSQL을 써보기로 결심했다.
-  - **RabbitMQ** : source DB에서 생성된 메시지를 운반할 Message Queue.
-    → Message Queue의 선택지는 크게 RabbitMQ와 Kafka로 나뉜다.
-    → CDC 구축을 위한 리서치는 대부분 Kafka를 사용하였고 RabbitMQ는 잘 쓰이지 않는 듯 자료도 별로 없다.
-    → 하지만 PostgreSQL과 마찬가지로 트래픽이 몰리는 상황은 경험하기 어려울 듯 하여 Kafka에 비해 가벼우며 실시간성을 위한 RabbitMQ Stream 기능을 가진 RabbitMQ를 사용하기로 결정했다.
-  - **Debezium** : DB to MQ를 위한 source connector.
-    → CDC를 위한 오픈 소스로 log 파일을 관찰해 데이터 변경을 감지하여 이벤트를 발생한다.
-    → PostgreSQL의 WAL파일로부터 source하여 RabbitMQ로 sink할 수 있다.
-  - **MongoDB** : Microservice 들의 Read 작업이 주가 될 DB.
-    → CDC를 통해 Read용, CUD용 DB로 나뉘게 되고, Read 작업이 주가 된다면 RDBMS보다 NoSQL이 적합하다고 판단했다.
+* **통신**: **OpenFeign**을 사용하여 MSA 간의 REST API 호출을 인터페이스 기반으로 간결하게 구현했다.
+* **장애 격리**: **Resilience4j**를 **Circuit Breaker** 구현체로 사용하여, 특정 서비스의 장애가 다른 서비스로 전파되는 것을 방지한다.
+    * 실패율, 응답 지연 시간 등을 기준으로 서킷을 열고(OPEN), 에러를 빠르게 반환하여 시스템 전체의 안정성을 확보했다.
+##### OpenFeign 및 Circuit Breaker 적용 예시
+```kotlin
+// FeignClient Interface
+@FeignClient(name = "catalog-m-service")
+interface CatalogServiceClient {
+    @GetMapping("/catalog-m-service/{productId}/catalog")
+    fun getCatalog(@PathVariable productId: String): ResponseCatalog?
+}
 
-### Sink
+// Service Logic with Circuit Breaker
+@Transactional
+override fun createOrder(orderDto: OrderDto): OrderDto {
+    ...
+    // 서킷 브레이커로 Feign Client 호출을 감쌉니다.
+    val catalog = circuitBreaker.run(
+        { catalogServiceClient.getCatalog(orderDto.productId) ?: throw BaseException(...) },
+        { _: Throwable -> throw BaseException(ErrorCode.OPEN_FEIGN_FAILURE) } // 실패 시 Fallback 로직
+    )
+    ...
+}
+```
+### 5. 분산 추적 및 모니터링
 
-- PostgreSQL to RabbitMQ를 해주는 source connector는 존재하지만 RabbitMQ to MongoDB를 위한 sink connector는 존재하지 않는다.
-  → 정확히는 RabbitMQ를 source로 하는 sink connector가 존재하지 않는다.
-- RabbitMQ Stream에 들어오는 Message를 보고 직접 Consumer를 구현했다.
-  ```yaml
-  class RabbitConsumeImpl : RabbitConsume {
-      private val env = Environment.builder().build()
-      private val objectMapper = ObjectMapper()
+* **분산 추적**: **Zipkin**과 **Micrometer**를 사용하여 여러 서비스에 걸친 요청 흐름을 **Trace ID** 기반으로 추적하고 시각화한다. 이를 통해 MSA 환경에서의 병목 지점 및 오류 원인 분석을 용이하게 한다.
+* **모니터링**: **Prometheus**가 각 서비스의 JVM 메트릭 등 주요 지표를 수집하고, **Grafana** 대시보드를 통해 이를 시각화하여 서비스 상태를 실시간으로 모니터링한다.
 
-      override fun start(db: String, table: String) {
-          println("Wait for connect DB...")
-          val targetDB = MongoFactory(username = "esta", password = "zxcv3210").createDB(db)
-          val collection = targetDB.getCollection(table)
+<br>
 
-          val topic = "$db.$table"
-          println("Starting Consuming from Queue : $topic")
+## 💡 추가 개선사항 및 적용 패턴
 
-          val consumer = env.consumerBuilder()
-              .stream(topic)
-              .offset(OffsetSpecification.next())
-              .name("$topic-consumer")
-              .manualTrackingStrategy()
-              .builder()
-              .messageHandler { context, message ->
-                  runCatching {
-                      objectMapper.readValue(message.bodyAsBinary, object : TypeReference<Map<String, Any>>() {})
-                  }.onSuccess {
-                      val payload = it["payload"] as Map<String, Any>
-                      val before = payload["before"] as Map<String, Any>?
-                      val after = payload["after"] as Map<String, Any>?
-                      val op = payload["op"] as String?
-                      val transaction = payload["transaction"] as String?
+### 1. CDC & CQRS 패턴 적용
 
-                      when (op) {
-                          "c" -> {
-                              val doc = Document()
-                              for (key in after!!.keys) {
-                                  if (key == "id") doc.append("_id", after[key] as Int) else doc.append(key, after[key])
-                              }
+**CQRS(Command and Query Responsibility Segregation)** 패턴을 적용하여 CUD(Command)와 Read(Query)의 책임을 분리하고 데이터베이스 부하를 분산시켰다.
 
-                              collection.insertOne(doc)
-                          }
+* **Source (Write DB)**: **PostgreSQL**에서 발생하는 데이터 변경(CUD)을 **Debezium**이 WAL(Write-Ahead Log)을 통해 감지한다.
+* **Message Queue**: Debezium이 감지한 변경 이벤트를 **RabbitMQ**로 전송한다.
+* **Sink (Read DB)**: RabbitMQ의 이벤트를 구독하는 **직접 구현한 Consumer**가 **MongoDB**에 데이터를 동기화하여 조회 성능을 최적화했다.
 
-                          "u" -> {
-                              val doc = Filters.eq("_id", after!!["id"])
-                              val updateList = after!!.map { (key, value) ->
-                                  Updates.set(if (key == "id") "_id" else key, value)
-                              }
-                              val updateOperation = Updates.combine(updateList)
+##### RabbitMQ to MongoDB Consumer 구현
+```kotlin
+// RabbitMQ Stream에서 Debezium 메시지를 받아 MongoDB에 적용하는 Consumer
+messageHandler { context, message ->
+    // ... 메시지 파싱 ...
+    when (op) {
+        "c" -> { // Create
+            val doc = Document()
+            // ... Bson Document 생성 로직 ...
+            collection.insertOne(doc)
+        }
+        "u" -> { // Update
+            val doc = Filters.eq("_id", after!!["id"])
+            // ... 업데이트 로직 ...
+            collection.updateOne(doc, updateOperation)
+        }
+        "d" -> { // Delete
+            val doc = Filters.eq("_id", before!!["id"])
+            collection.deleteOne(doc)
+        }
+    }
+    context.storeOffset() // 오프셋 수동 저장
+}
+```
 
-                              collection.updateOne(doc, updateOperation)
-                          }
+### 2. SAGA 패턴을 이용한 분산 트랜잭션
 
-                          "d" -> {
-                              val doc = Filters.eq("_id", before!!["id"])
+주문 취소와 같이 여러 서비스에 걸친 트랜잭션을 처리하기 위해 **SAGA 패턴 (Choreography-based)** 을 적용했다.
 
-                              collection.deleteOne(doc)
-                          }
+1.  **Order Service**: 주문 취소 요청 시, 주문 상태를 변경하고 `rollback` 이벤트를 **RabbitMQ**에 발행(Produce)한다.
+2.  **Catalog Service**: `rollback` 이벤트를 구독(Consume)하여, 주문됐던 상품의 재고를 다시 늘리는 **보상 트랜잭션(Compensating Transaction)** 을 수행한다.
+3.  데이터 삭제는 `isValid`와 같은 필드를 이용한 **논리적 삭제(Soft Delete)** 방식을 사용했다.
 
-                          else -> println("Check Rabbitmq message IMMEDIATELY!")
-                      }
+<br>
 
-                      context.storeOffset()
-                  }.onFailure { e ->
-                      e.printStackTrace()
-                  }
-              }
-              .build()
-      }
+## 🚀 컨테이너화 및 실행 (Docker)
 
-      override fun close() {
-          env.close()
-      }
-  }
-  ```
-  → 추후 추가 작업 필요.
-- 아래 페이지에는 각 구성에 대한 설치 및 실행, 진행하면서 겪은 Trouble Shooting이 적혀있다.
-  [PostgreSQL:15](https://www.notion.so/PostgreSQL-15-1677c11afefe806b995bc1f51bd9446e?pvs=21)
-  [RabbitMQ:4.0-management](https://www.notion.so/RabbitMQ-4-0-management-1677c11afefe80ffb716e34d0ddd3a60?pvs=21)
-  [Debezium/server:2.7.3.Final](https://www.notion.so/Debezium-server-2-7-3-Final-16a7c11afefe80ecaec4c1464a253fbb?pvs=21)
-  [MongoDB:8.0.4](https://www.notion.so/MongoDB-8-0-4-16c7c11afefe800abfbaf3502137b1cd?pvs=21)
+모든 Microservice와 인프라(DB, MQ 등)는 **Docker Container**로 실행하여 개발 환경을 표준화하고 배포를 용이하게 했다. `docker run` 명령어의 `-e` 옵션을 통해 yaml 파일을 직접 수정하지 않고 외부에서 설정 값을 주입한다.
 
-# 참고
+##### 서비스 실행 명령어 예시
+```shell
+# Config Service 실행
+docker run -d \
+--name config-m-service \
+--network ecommerce-network \ 
+-p 8888:8888 \
+-e "spring.rabbitmq.host=rbmq" \
+config-service:1.0
+
+# Discovery Service 실행
+docker run -d \
+--name discovery-m-service \
+--network ecommerce-network \
+-p 8761:8761 \
+discovery-service:1.0
+
+# User Service 실행
+docker run -d \
+--name user-m-service \
+--network ecommerce-network \
+-e "logging.file=/api-logs/users-ws.log" \
+user-service:1.0
+
+# Order Service 실행
+docker run -d \
+--name order-m-service \
+--network ecommerce-network \
+-e "logging.file=/api-logs/orders-ws.log" \
+order-service:1.0
+
+# Catalog Service 실행
+docker run -d \
+--name catalog-m-service \
+--network ecommerce-network \
+-e "logging.file=/api-logs/catalogs-ws.log" \
+catalog-service:1.0
+```

@@ -1,5 +1,6 @@
 encrypt:
   key-store:
-    location: file:///D:\Book\keystore\springMsaPrvKey.jks
+#    location: file:///D:\Book\keystore\springMsaPrvKey.jks
+    location: file:/springMsaPrvKey.jks
     password: password
     alias: springMsaPrvKey

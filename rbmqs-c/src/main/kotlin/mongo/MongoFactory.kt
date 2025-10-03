@@ -5,18 +5,27 @@ import com.mongodb.MongoCredential
 import com.mongodb.ServerAddress
 import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoClients
+import com.mongodb.client.MongoCollection
 import com.mongodb.client.MongoDatabase
+import org.bson.Document
+import service.yaml.ConfigLoader
 
-class MongoFactory(
-    var host: String = "localhost",
-    var port: Int = 27017,
-    var username: String = "test",
-    var password: String = "test"
-) {
-    private lateinit var client: MongoClient
+class MongoFactory {
+    private val mongoConfig = ConfigLoader.config.mongo
 
-    private fun connect(db: String) {
-        val credential = MongoCredential.createCredential(username, db, password.toCharArray())
+    private val host: String = mongoConfig.host
+    private val port: Int = mongoConfig.port
+    private val username: String = mongoConfig.username
+    private val password: String = mongoConfig.password
+    private val database: String = mongoConfig.database
+    private val collections: List<String> = mongoConfig.collections.split(",").map { it.trim() }.toList()
+    private val collectionMap = HashMap<String, MongoCollection<Document>>()
+
+    private var client: MongoClient
+    private var db: MongoDatabase
+
+    init {
+        val credential = MongoCredential.createCredential(username, database, password.toCharArray())
         println("Credential : $credential")
 
         client = MongoClients.create(
@@ -25,14 +34,13 @@ class MongoFactory(
                 .credential(credential)
                 .build()
         )
+
+        db = client.getDatabase(database)
     }
 
-    fun createDB(db: String): MongoDatabase {
-        connect(db)
-        return client.getDatabase(db)
-    }
+    fun connectCollections(): HashMap<String, MongoCollection<Document>> {
+        collections.forEach { collectionMap[it] = db.getCollection(it) }
 
-    fun createDB(): MongoDatabase {
-        return createDB("test")
+        return collectionMap
     }
 }

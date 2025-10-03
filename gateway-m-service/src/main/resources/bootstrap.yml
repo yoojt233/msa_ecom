@@ -1,0 +1,9 @@
+spring:
+  cloud:
+    config:
+      uri: http://config-m-service:8888
+#      uri: http://localhost:8888
+      name: gateway-m-service
+
+#  profiles:
+#    active: prod

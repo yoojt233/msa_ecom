@@ -1,0 +1,12 @@
+rabbitmq:
+  stream:
+    topic: ecommerce
+
+mongo:
+#  host: localhost
+  host: mng
+  port: 27017
+  username: esta
+  password: esta
+  database: ecom
+  collections: orders, catalogs
