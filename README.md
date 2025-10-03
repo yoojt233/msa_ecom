@@ -9,6 +9,7 @@
 <br>
 
 ## 🏗️ 아키텍처 구성도 (Architecture)
+<img width="1200" height="600" alt="Image" src="https://github.com/user-attachments/assets/f594e290-1ac3-460b-9772-d3575dcd3861" />
 
 <br>
 
